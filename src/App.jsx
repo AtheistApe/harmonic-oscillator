@@ -1,6 +1,27 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Play, Pause, RotateCcw } from "lucide-react";
 
+function Slider({ label, value, onChange, min, max, step, unit, disabled }) {
+  return (
+    <div className="slider-group">
+      <div className="slider-label">
+        <span className="slider-name">{label}</span>
+        <span className="slider-value">{value.toFixed(2)} <span className="slider-unit">{unit}</span></span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="slider"
+      />
+    </div>
+  );
+}
+
 export default function HarmonicOscillator() {
   // Parameters
   const [mass, setMass] = useState(1.0);
@@ -172,7 +193,7 @@ export default function HarmonicOscillator() {
 
   // SVG geometry — wider physical range to accommodate large oscillations
   const sceneW = 720;
-  const sceneH = 240;
+  const sceneH = 270;
   const equilibriumPx = sceneW * 0.62; // equilibrium position on screen
   const wallX = 60;
   const tableY = 180;
@@ -204,8 +225,8 @@ export default function HarmonicOscillator() {
 
   // Graph geometry
   const graphW = 720;
-  const graphH = 220;
-  const graphPad = { top: 20, right: 20, bottom: 36, left: 50 };
+  const graphH = 240;
+  const graphPad = { top: 20, right: 20, bottom: 50, left: 70 };
   const plotW = graphW - graphPad.left - graphPad.right;
   const plotH = graphH - graphPad.top - graphPad.bottom;
 
@@ -220,26 +241,6 @@ export default function HarmonicOscillator() {
   const trajectoryPath = history.length > 1
     ? "M " + history.map((p) => `${tToPx(p.t).toFixed(2)} ${xToPx(p.x).toFixed(2)}`).join(" L ")
     : "";
-
-  // Slider component
-  const Slider = ({ label, value, onChange, min, max, step, unit, disabled }) => (
-    <div className="slider-group">
-      <div className="slider-label">
-        <span className="slider-name">{label}</span>
-        <span className="slider-value">{value.toFixed(2)} <span className="slider-unit">{unit}</span></span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        disabled={disabled}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="slider"
-      />
-    </div>
-  );
 
   return (
     <div className="oscillator-root">
@@ -631,14 +632,15 @@ export default function HarmonicOscillator() {
                   if (px < wallX + 20 || px > sceneW - 10) return null;
                   return (
                     <g key={tick}>
-                      <line x1={px} y1={tableY + 50} x2={px} y2={tableY + 56} stroke="var(--ink-soft)" strokeWidth="0.5" />
+                      <line x1={px} y1={tableY + 50} x2={px} y2={tableY + 58} stroke="var(--ink)" strokeWidth="1" />
                       <text
                         x={px}
-                        y={tableY + 68}
+                        y={tableY + 72}
                         textAnchor="middle"
                         fontFamily="JetBrains Mono"
-                        fontSize="8"
-                        fill="var(--ink-faint)"
+                        fontSize="13"
+                        fontWeight="500"
+                        fill="var(--ink)"
                       >
                         {tick}
                       </text>
@@ -685,12 +687,13 @@ export default function HarmonicOscillator() {
                         strokeDasharray={frac === 0 ? "" : "2 3"}
                       />
                       <text
-                        x={graphPad.left - 8}
-                        y={yPx + 3}
+                        x={graphPad.left - 10}
+                        y={yPx + 4}
                         textAnchor="end"
                         fontFamily="JetBrains Mono"
-                        fontSize="9"
-                        fill="var(--ink-faint)"
+                        fontSize="13"
+                        fontWeight="500"
+                        fill="var(--ink)"
                       >
                         {yv.toFixed(1)}
                       </text>
@@ -715,11 +718,12 @@ export default function HarmonicOscillator() {
                       />
                       <text
                         x={xPx}
-                        y={graphPad.top + plotH + 16}
+                        y={graphPad.top + plotH + 20}
                         textAnchor="middle"
                         fontFamily="JetBrains Mono"
-                        fontSize="9"
-                        fill="var(--ink-faint)"
+                        fontSize="13"
+                        fontWeight="500"
+                        fill="var(--ink)"
                       >
                         {tv.toFixed(1)}
                       </text>
@@ -741,24 +745,24 @@ export default function HarmonicOscillator() {
                 {/* Axis labels */}
                 <text
                   x={graphPad.left + plotW / 2}
-                  y={graphH - 4}
+                  y={graphH - 6}
                   textAnchor="middle"
                   fontFamily="Fraunces"
                   fontStyle="italic"
-                  fontSize="12"
+                  fontSize="14"
                   fill="var(--ink)"
                 >
                   t (seconds)
                 </text>
                 <text
-                  x={14}
+                  x={18}
                   y={graphPad.top + plotH / 2}
                   textAnchor="middle"
                   fontFamily="Fraunces"
                   fontStyle="italic"
-                  fontSize="12"
+                  fontSize="14"
                   fill="var(--ink)"
-                  transform={`rotate(-90, 14, ${graphPad.top + plotH / 2})`}
+                  transform={`rotate(-90, 18, ${graphPad.top + plotH / 2})`}
                 >
                   x (meters)
                 </text>
